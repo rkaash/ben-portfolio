@@ -1,28 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+/**
+ * Supabase connection.
+ *
+ * Environment variables win when present, otherwise these built-in values are
+ * used so the site works on any host without extra configuration.
+ *
+ * Committing these is safe and deliberate:
+ *  - Every VITE_* value is compiled into the browser bundle anyway, so none of
+ *    them can be kept secret in a frontend app.
+ *  - The publishable ("anon") key is designed to be public. It grants only what
+ *    the Row Level Security policies in supabase/setup.sql allow: anyone may
+ *    read the portfolio content, and only the OTP-verified owner may write.
+ *  - The owner email is already shown publicly on the site.
+ *
+ * The service_role key is the one that must never appear here or anywhere in
+ * the frontend - it bypasses RLS entirely.
+ */
+const FALLBACK_URL = 'https://oavchmjzxjhwkltiowll.supabase.co';
+const FALLBACK_ANON_KEY = 'sb_publishable_Jq8Jboy1mD5IDMk0KLMEHg_9vVPbsWQ';
+const FALLBACK_OWNER_EMAIL = 'r.prakaash@yahoo.com';
 
-export const OWNER_EMAIL = (import.meta.env.VITE_OWNER_EMAIL as string) || '';
+const url = (import.meta.env.VITE_SUPABASE_URL as string | undefined) || FALLBACK_URL;
+const anonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) || FALLBACK_ANON_KEY;
 
-// When env vars are missing the app still renders from bundled defaults instead of
-// crashing on a null client - isSupabaseConfigured gates every network call.
+export const OWNER_EMAIL =
+  (import.meta.env.VITE_OWNER_EMAIL as string | undefined) || FALLBACK_OWNER_EMAIL;
+
 export const isSupabaseConfigured = Boolean(url && anonKey);
 
-if (!isSupabaseConfigured) {
-  // Silently serving stale bundled defaults is hard to diagnose on a deployed
-  // site (it looks like "the content reverted"), so say so loudly.
-  console.warn(
-    '[portfolio] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY are not set, so the ' +
-    'site is rendering bundled default content instead of your live Supabase data. ' +
-    'Uploaded images and any edits made in the owner editor will NOT appear. ' +
-    'Set these in your hosting provider\'s environment variables and redeploy — ' +
-    'VITE_ values are baked in at build time, so a rebuild is required.'
-  );
-}
-
 export const supabase = isSupabaseConfigured
-  ? createClient(url!, anonKey!, {
+  ? createClient(url, anonKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
