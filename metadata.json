@@ -1,0 +1,6 @@
+{
+  "name": "Mr. Rooben - Portfolio",
+  "description": "Interactive animated portfolio website for Mr. Rooben featuring dynamic timeline, project showcase, and admin content management system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

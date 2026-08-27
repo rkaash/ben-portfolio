@@ -1,0 +1,405 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Syne', 'Outfit', sans-serif;
+    --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+
+  /* Ambient blur orbs are intentionally oversized; clip them instead of
+     letting them create a horizontal scrollbar on small screens. */
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+/* Artistic Flair: Outlined Typography */
+.text-outline {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.35);
+  color: transparent;
+  transition: -webkit-text-stroke 0.3s ease;
+}
+
+.text-outline:hover {
+  -webkit-text-stroke: 1.5px rgba(255, 62, 0, 0.8);
+}
+
+.text-outline-light {
+  -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.4);
+  color: transparent;
+}
+
+/* Artistic Flair: Glass Cards & Translucency */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Artistic Flair: Fiery Gradients & Accent Colors */
+.accent-gradient {
+  background: linear-gradient(135deg, #FF3E00 0%, #FF9E00 100%);
+}
+
+.accent-gradient-text {
+  background: linear-gradient(135deg, #FF3E00 0%, #FF9E00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.accent-gradient-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+}
+
+.accent-gradient-cyber {
+  background: linear-gradient(135deg, #f43f5e 0%, #a855f7 50%, #06b6d4 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #FF3E00 0%, #FF9E00 50%, #FBBF24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #34d399 0%, #22d3ee 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-amber {
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Artistic Flair: Skew Transforms */
+.skew-item {
+  transform: skewX(-5deg);
+}
+
+.skew-item-reverse {
+  transform: skewX(5deg);
+}
+
+.skew-item-subtle {
+  transform: skewX(-3deg);
+}
+
+/* The decorative skew pushes wide cards past the viewport on small screens,
+   so drop it below the sm breakpoint. */
+@media (max-width: 640px) {
+  .skew-item,
+  .skew-item-reverse,
+  .skew-item-subtle {
+    transform: none;
+  }
+}
+
+/* Simulated Noise Overlay */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Grid background pattern */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.bg-grid-pattern-light {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+.bg-dots-pattern {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+/* Hide scrollbar globally */
+html, body, * {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+/* 3D Transform Utilities */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 5s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.75s ease-out forwards;
+}
+
+/* ---- Resume / CV document ---- */
+.resume-paper {
+  font-family: var(--font-sans);
+}
+
+.resume-h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #0f172a;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.7rem;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+.resume-block {
+  break-inside: avoid;
+}
+
+/* Print: isolate the CV, drop the app chrome, and force real paper colours */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm 0;
+  }
+
+  html, body {
+    background: #fff !important;
+    height: auto !important;
+  }
+
+  /* Hide everything except the resume modal's own subtree */
+  body > * {
+    display: none !important;
+  }
+  body > #root {
+    display: block !important;
+  }
+  #root > div > *:not(#resume-view-modal) {
+    display: none !important;
+  }
+
+  #resume-view-modal {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    overflow: visible !important;
+    background: none !important;
+  }
+
+  /* The on-screen card is a height-capped flex column with an inner scroll
+     region. For print it must collapse into ordinary flowing blocks, or only
+     the first visible page would be output. */
+  #resume-view-modal > div,
+  #resume-view-modal > div > div {
+    position: static !important;
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .resume-paper {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .resume-header {
+    padding-top: 0 !important;
+  }
+
+  /* Preserve the accent colour instead of letting the browser strip backgrounds */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  section, div, li, h2, h3 {
+    break-inside: avoid;
+  }
+}
+
+/* Vertically stretched display headline (taller letterforms than the font's natural ratio) */
+.headline-stretch > span {
+  display: block;
+  transform: scaleY(1.35);
+  transform-origin: center;
+  /* The scaleY makes each line render taller than its layout box, so the
+     margin has to cover that overflow plus the gap we actually want. */
+  margin-block: 0.2em;
+}
+
+/* Running neon highlight: the glow travels from one direct-link icon to the
+   next in sequence, then loops. Each icon carries its position in the chase
+   via the inline --chase-index custom property. */
+@keyframes neon-chase {
+  0%,
+  30%,
+  100% {
+    box-shadow: 0 0 3px rgba(255, 62, 0, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgb(163, 163, 163);
+  }
+  /* Gentle swell in, hold, then fade out - neighbours overlap slightly so the
+     glow reads as one light gliding along the row rather than icons blinking. */
+  8% {
+    box-shadow:
+      0 0 12px 2px rgba(255, 62, 0, 0.55),
+      0 0 22px 6px rgba(255, 158, 0, 0.3);
+    border-color: rgba(255, 158, 0, 0.6);
+    color: rgb(229, 229, 229);
+  }
+  15% {
+    box-shadow:
+      0 0 18px 3px rgba(255, 62, 0, 0.85),
+      0 0 32px 9px rgba(255, 158, 0, 0.45);
+    border-color: rgba(255, 158, 0, 0.95);
+    color: rgb(255, 255, 255);
+  }
+  22% {
+    box-shadow:
+      0 0 12px 2px rgba(255, 62, 0, 0.5),
+      0 0 22px 6px rgba(255, 158, 0, 0.28);
+    border-color: rgba(255, 158, 0, 0.55);
+    color: rgb(212, 212, 212);
+  }
+}
+
+.neon-chase {
+  /* One full, unhurried pass across all icons */
+  --chase-duration: 8s;
+  --chase-count: 7;
+  animation: neon-chase var(--chase-duration) ease-in-out infinite;
+  animation-delay: calc(
+    var(--chase-index, 0) * var(--chase-duration) / var(--chase-count)
+  );
+  /* Smooths the colour shift between keyframes on top of the glow itself */
+  transition: color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Hovering holds that icon steady so the pointer target stays readable */
+.neon-chase:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-chase {
+    animation: none;
+  }
+}

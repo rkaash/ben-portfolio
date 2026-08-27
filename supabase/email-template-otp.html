@@ -1,0 +1,79 @@
+<!--
+  ============================================================
+  PORTFOLIO EDITOR - OTP CODE EMAIL TEMPLATE
+  ============================================================
+  Where to paste this:
+    Supabase Dashboard
+      -> Authentication
+      -> Emails            (older UI: "Email Templates")
+      -> Magic Link        <- this exact template
+      -> replace the whole body with everything below
+      -> Save
+
+  WHY: Supabase chooses what to send based on the variable used.
+       {{ .ConfirmationURL }}  ->  sends a clickable sign-in link
+       {{ .Token }}            ->  sends the 6-digit numeric code
+  This template deliberately uses ONLY {{ .Token }}, so no link is
+  included and the code must be typed into the site.
+  ============================================================
+-->
+
+<div style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:32px 16px;">
+    <tr>
+      <td align="center">
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#121212;border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;">
+
+          <!-- Accent bar -->
+          <tr>
+            <td style="height:4px;background:linear-gradient(90deg,#FF3E00 0%,#FF9E00 100%);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <tr>
+            <td style="padding:36px 32px 32px 32px;">
+
+              <p style="margin:0 0 6px 0;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#FF9E00;font-weight:700;">
+                Portfolio Editor
+              </p>
+
+              <h1 style="margin:0 0 14px 0;font-size:22px;line-height:1.3;color:#ffffff;font-weight:800;">
+                Your verification code
+              </h1>
+
+              <p style="margin:0 0 26px 0;font-size:14px;line-height:1.6;color:#a3a3a3;">
+                Enter this code on the site to unlock editing. It expires in 60 minutes and can only be used once.
+              </p>
+
+              <!-- The code itself -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="background-color:#1c1c1c;border:1px solid rgba(255,158,0,0.35);border-radius:14px;padding:22px 12px;">
+                    <div style="font-family:'Courier New',Courier,monospace;font-size:32px;font-weight:700;letter-spacing:6px;color:#FF9E00;">
+                      {{ .Token }}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:26px 0 0 0;font-size:13px;line-height:1.6;color:#737373;">
+                If you didn't try to sign in, you can safely ignore this email — no changes were made.
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:18px 32px 26px 32px;border-top:1px solid rgba(255,255,255,0.07);">
+              <p style="margin:0;font-size:11px;line-height:1.6;color:#525252;">
+                This is an automated security message. Never share this code with anyone.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</div>
