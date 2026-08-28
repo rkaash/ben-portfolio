@@ -340,9 +340,15 @@ html, body, * {
   display: block;
   transform: scaleY(1.35);
   transform-origin: center;
-  /* The scaleY makes each line render taller than its layout box, so the
-     margin has to cover that overflow plus the gap we actually want. */
-  margin-block: 0.2em;
+}
+
+/* The scaleY leaves the layout box at its unscaled height, so spacing has to be
+   driven by line-height rather than margins: a margin only separates the two
+   spans, while a role that wraps ("Junior Data Scientist" -> DATA / SCIENTIST)
+   collides *within* a span where no margin exists. Cap height is roughly 0.7em,
+   so scaled glyphs stand about 0.95em tall — the line box must exceed that. */
+.headline-stretch {
+  line-height: 1.2;
 }
 
 /* Running neon highlight: the glow travels from one direct-link icon to the

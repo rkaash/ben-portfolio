@@ -25,11 +25,14 @@ export const Hero: React.FC<HeroProps> = ({ theme }) => {
 
   const isDark = theme !== 'light';
 
-  // The big two-line headline is driven by the editable role, so changing it in
-  // the editor updates the hero. First word on top, the rest outlined below.
-  const roleWords = PERSONAL_INFO.role.trim().split(/\s+/);
-  const headlineTop = roleWords[0] || '';
-  const headlineBottom = roleWords.slice(1).join(' ');
+  // The big headline is driven by the editable role, so changing it in the
+  // editor updates the hero. First word solid, the rest outlined beneath it.
+  //
+  // One word per line, deliberately: each line is scaleY'd about its own centre,
+  // so a span containing two wrapped lines would drag its first line up toward
+  // the span above and the gaps would come out uneven. One line per span keeps
+  // every gap identical no matter how long the role is.
+  const roleWords = PERSONAL_INFO.role.trim().split(/\s+/).filter(Boolean);
 
   // Order here is also the order of the running neon highlight.
   const directLinks = [
@@ -73,14 +76,20 @@ export const Hero: React.FC<HeroProps> = ({ theme }) => {
             <div className="mb-8 lg:mb-10 w-full">
               <h1
                 style={{ fontSize: 'clamp(2rem, 6vw, 4rem)' }}
-                className="headline-stretch font-extrabold tracking-tight uppercase leading-[0.86]"
+                className="headline-stretch font-extrabold tracking-tight uppercase"
               >
-                <span className="text-white block font-['Syne',sans-serif]">
-                  {headlineTop}
-                </span>
-                <span className="text-outline block font-['Syne',sans-serif] hover:text-white transition-all cursor-default">
-                  {headlineBottom}
-                </span>
+                {roleWords.map((word, i) => (
+                  <span
+                    key={`${word}-${i}`}
+                    className={
+                      i === 0
+                        ? "text-white block font-['Syne',sans-serif]"
+                        : "text-outline block font-['Syne',sans-serif] hover:text-white transition-all cursor-default"
+                    }
+                  >
+                    {word}
+                  </span>
+                ))}
               </h1>
             </div>
 
