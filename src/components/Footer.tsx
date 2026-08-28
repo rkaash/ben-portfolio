@@ -14,7 +14,7 @@ import {
   JobStreetIcon, 
   IndeedIcon 
 } from './SocialIcons';
-import { PERSONAL_INFO } from '../data/portfolioData';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { ThemeMode } from '../types';
 
 interface FooterProps {
@@ -22,6 +22,9 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ theme }) => {
+  const { data } = usePortfolioData();
+  const info = data.personalInfo;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -50,13 +53,13 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </div>
               <div>
                 <h3 className={`text-base font-bold uppercase tracking-wide ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {PERSONAL_INFO.name}
+                  {info.name}
                 </h3>
-                <p className="text-xs font-mono uppercase text-[#FF9E00]">{PERSONAL_INFO.role}</p>
+                <p className="text-xs font-mono uppercase text-[#FF9E00]">{info.role}</p>
               </div>
             </div>
             <p className="text-xs max-w-md leading-relaxed text-neutral-400 font-light">
-              {PERSONAL_INFO.tagline}
+              {info.tagline}
             </p>
           </div>
 
@@ -64,7 +67,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
           <div className="md:col-span-6 flex flex-col sm:flex-row sm:items-center md:justify-end gap-4">
             <div className="flex flex-wrap items-center gap-2">
               <a
-                href={PERSONAL_INFO.socials.facebook}
+                href={info.socials.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -77,7 +80,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={PERSONAL_INFO.socials.whatsapp}
+                href={info.socials.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -90,7 +93,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={PERSONAL_INFO.socials.instagram}
+                href={info.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -103,7 +106,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={PERSONAL_INFO.socials.linkedin}
+                href={info.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
@@ -116,7 +119,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={PERSONAL_INFO.socials.jobstreet}
+                href={info.socials.jobstreet}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="JobStreet"
@@ -129,7 +132,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={PERSONAL_INFO.socials.indeed}
+                href={info.socials.indeed}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Indeed"
@@ -142,7 +145,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
               </a>
 
               <a
-                href={`mailto:${PERSONAL_INFO.email}`}
+                href={`mailto:${info.email}`}
                 aria-label="Email"
                 title="Email"
                 className={`p-2.5 rounded-xl border transition-all skew-item ${
@@ -168,7 +171,7 @@ export const Footer: React.FC<FooterProps> = ({ theme }) => {
 
         {/* Bottom Tier */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono uppercase tracking-widest text-neutral-500">
-          <p>© {new Date().getFullYear()} {PERSONAL_INFO.name}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {info.name}. All rights reserved.</p>
           <div className="flex items-center gap-2 text-neutral-500">
             <span>Built with React 19, Tailwind CSS & Motion</span>
           </div>

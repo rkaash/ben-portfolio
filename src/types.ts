@@ -28,6 +28,8 @@ export interface PersonalInfo {
   location: string;
   timezone: string;
   status: string;
+  /** Right-to-work summary, shown on the site and on the generated CV. */
+  workEligibility: string;
   bio: string;
   avatarUrl: string;
   portraitUrl: string;

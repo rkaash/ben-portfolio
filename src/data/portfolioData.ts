@@ -1,56 +1,65 @@
 import { Project, Skill, TimelineItem, Testimonial, PersonalInfo, AboutData, FaqItem } from '../types';
 
 // ---------------------------------------------------------------------------
-// Snapshot of the live Supabase content.
+// SEED CONTENT - not used at runtime.
 //
-// At runtime the site loads this same data from Supabase, so the database stays
-// the source of truth and edits made in the owner editor take effect
-// immediately. This file is the fallback used when Supabase is unreachable or
-// its env vars are not configured - for example on a host where
-// VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY have not been set. Keeping it in
-// sync means the deployed site shows the correct content either way.
+// Supabase is the only source of content the site renders. Nothing here is
+// imported by any component; the single consumer is
+// scripts/generate-content-sql.ts, which compiles this into
+// supabase/update-content.sql so code-side content edits can be pushed live.
+//
+//   npm run gen:content   ->  paste supabase/update-content.sql into
+//                             Supabase -> SQL Editor -> Run
+//
+// Because that SQL REPLACES the live row wholesale, diff this against the live
+// content before running it. Anything edited in the owner editor but missing
+// here is silently destroyed - an empty string overwrites a real value just as
+// happily as a wrong one.
 //
 // Image URLs point at Supabase Storage; the binaries are not stored in the repo.
 // ---------------------------------------------------------------------------
 
 export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
-  bio: "Data Science graduate from Raffles University, holding a Bachelor Degree in Data Science alongside a Diploma in Computer Science. I have completed my internship as a Data Analyst and Software Developer, and have delivered production applications across AI platforms, web systems, mobile apps, and business automation for real clients. I am now actively seeking a Data Scientist role where I can build on that foundation, gain deeper industry experience, and turn data into decisions that matter.",
+  bio: "Data Science graduate (BSc, CGPA 3.80) from Raffles University, with a Diploma in Computer Science. I recently completed my internship as a Data Analyst and Software Developer, and alongside my studies I have shipped eleven production applications for real, paying clients — AI platforms, machine-learning forecasting, point-of-sale systems, and business automation. I work end to end: from raw data and cleaning, through modelling and dashboards, to the software that puts the result in front of users. I am now seeking a Data Analyst or Junior Data Scientist role.",
   name: "Rooben Prakaash",
-  role: "Data Scientist",
-  email: "r.prakaash@yahoo.com",
+  role: "Data Analyst | Junior Data Scientist",
+  email: "onyxtech26@gmail.com",
   phone: "+60 19-468 8052",
   stats: [
     {
       label: "Projects Delivered",
-      value: "11+"
+      value: "11"
     },
     {
-      label: "Years Industry Experience",
-      value: "3+"
+      label: "Shipped for Real Clients",
+      value: "7"
     },
     {
-      label: "Professional Roles Held",
-      value: "4"
+      label: "Degree CGPA",
+      value: "3.80"
     },
     {
       label: "Degree Completed",
       value: "BSc Data Science"
     }
   ],
-  status: "Graduated & Actively Seeking Data Scientist Opportunities",
+  status: "Graduated • Seeking Data Analyst / Junior Data Scientist roles",
+  workEligibility: "Malaysian citizen — immediately available in Malaysia. Singapore roles require Employment Pass sponsorship.",
   socials: {
-    email: "mailto:r.prakaash@yahoo.com",
-    github: "https://github.com/roobenprakaash",
-    indeed: "https://profile.indeed.com/p/roobenprakaash",
-    website: "",
-    facebook: "https://facebook.com/roobenprakaash",
-    linkedin: "https://linkedin.com/in/roobenprakaash",
+    email: "mailto:onyxtech26@gmail.com",
+    github: "https://github.com/rkaash",
+    // Was holding a duplicate of the LinkedIn URL live, which sent the footer's
+    // Indeed button to the wrong site. Blank until a real Indeed profile exists.
+    indeed: "",
+    website: "https://thebenportfolio.vercel.app",
+    facebook: "https://www.facebook.com/share/1DMMeQdDiv/?mibextid=wwXIfr",
+    linkedin: "https://www.linkedin.com/in/rooben-prakaash-soomu-820216267",
     whatsapp: "https://wa.me/60194688052",
-    instagram: "https://instagram.com/roobenprakaash",
-    jobstreet: "https://www.jobstreet.com.my/en/profile/rooben-prakaash"
+    instagram: "https://www.instagram.com/_.rooben__?igsi=MTh5OHA5MmlzbXRjZQ%3D%3D&utm_source=qr",
+    jobstreet: "https://my.jobstreet.com/profiles/roobenprakaash-soomu-hxZcPhDvvs"
   },
   tagline: "Data Analytics, Machine Learning & Full-Stack Development",
-  location: "Jalan Puteri 1/3, 81800 Ulu Tiram, Johor",
+  location: "Ulu Tiram, Johor, Malaysia",
   timezone: "Asia/Kuala_Lumpur (GMT+8)",
   avatarUrl: "https://oavchmjzxjhwkltiowll.supabase.co/storage/v1/object/public/portfolio-media/avatars/avatar-1787804338635.png",
   formalName: "Rooben Prakaash A/L Soomu",
@@ -59,7 +68,7 @@ export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
 };
 
 export const DEFAULT_ABOUT_DATA: AboutData = {
-  quote: "Graduated, hands-on, and ready to grow — actively seeking my next role in data science.",
+  quote: "Graduated, hands-on, and ready to grow — actively seeking my first full-time role in data.",
   pillars: [
     {
       desc: "Data cleaning, exploratory analysis, statistical modelling, time series forecasting, and visualisation with Power BI, Matplotlib, Seaborn, and Plotly.",
@@ -77,22 +86,69 @@ export const DEFAULT_ABOUT_DATA: AboutData = {
       iconName: "Cpu"
     }
   ],
-  badgeText: "Graduated • Open to Opportunities",
-  paragraph1: "I have completed my Bachelor Degree in Data Science at Raffles University, building on a Diploma in Computer Science from Crescendo International College. My studies covered machine learning, statistical analysis, data mining, and database design, which I pair with practical programming across Python, R, SQL, and JavaScript.",
-  paragraph2: "I recently finished my internship as a Data Analyst and Software Developer at SJK(T) Ladang Mount Austin, and alongside my studies I have shipped production software for real clients — AI platforms, cross-platform apps, business automation, and commercial websites. I am now looking for a Data Scientist role where I can deepen that experience and contribute to work that has real impact.",
-  description: "Data analysis and machine learning, backed by real industry experience in IT infrastructure and software development.",
-  formalTitle: "Data Scientist • BSc Data Science, Raffles University",
+  badgeText: "Graduated 2026 • Open to Opportunities",
+  paragraph1: "I completed my Bachelor Degree in Data Science at Raffles University with a CGPA of 3.80, building on a Diploma in Computer Science from Crescendo International College. My studies covered machine learning, neural networks, statistical analysis, time series forecasting, data mining and database design — which I pair with practical programming across Python, R, SQL, and JavaScript.",
+  paragraph2: "I recently finished my internship as a Data Analyst and Software Developer at SJK(T) Ladang Mount Austin, where I turned institutional data into reporting the school actually used, and built the software to manage it. Alongside my studies I have shipped eleven production applications for real, paying clients — AI platforms, machine-learning forecasting, point-of-sale systems, and business automation. I am now looking for a Data Analyst or Junior Data Scientist role where I can go deeper on the industry side.",
+  description: "Data analysis and machine learning, paired with the engineering skill to turn an analysis into something a business can actually use.",
+  formalTitle: "Data Analyst | Junior Data Scientist • BSc Data Science (CGPA 3.80), Raffles University",
   headlineMain: "BUILDING WITH",
   sectionTitle: "01 / PROFILE & BACKGROUND",
   sectionSubtitle: "Data Science",
   headlineHighlight: "DATA & CODE"
 };
 
-export const PERSONAL_INFO = DEFAULT_PERSONAL_INFO;
-
 export const PROJECTS: Project[] = [
   {
+    id: "ai-retail-manager",
+    demoUrl: "",
+    githubUrl: "",
+    tags: [
+      "Python",
+      "Machine Learning",
+      "Demand Forecasting",
+      "Analytics"
+    ],
+    image: "",
+    title: "AI Retail Manager",
+    category: "ai_ml",
+    featured: true,
+    subtitle: "Machine Learning Retail Operations",
+    highlights: [
+      "Automated stock tracking across the retail catalogue",
+      "Machine-learning demand forecasting to guide purchasing",
+      "Real-time sales analytics dashboard"
+    ],
+    description: "A retail management solution powered by AI, featuring automated stock tracking, machine-learning demand forecasting, and real-time sales analytics.",
+    categoryLabel: "AI Platform · Retail",
+    longDescription: "AI Retail Manager applies machine learning to the operational side of retail. It tracks stock automatically, forecasts demand so ordering can be planned rather than reacted to, and surfaces sales analytics in real time — turning day-to-day transaction data into decisions about what to stock and when."
+  },
+  {
+    id: "biometric-attendance",
+    demoUrl: "",
+    githubUrl: "",
+    tags: [
+      "Python",
+      "OpenCV",
+      "Biometrics",
+      "Image Processing"
+    ],
+    image: "",
+    title: "Biometric Attendance System",
+    category: "iot_data",
+    featured: true,
+    subtitle: "Fingerprint Recognition & Tamper-Proof Logging",
+    highlights: [
+      "Fingerprint recognition powered by Python and OpenCV image processing",
+      "Tamper-proof logging for a trustworthy attendance record"
+    ],
+    description: "A high-security attendance tracking system using fingerprint recognition, built with Python and OpenCV for accurate, tamper-proof logging.",
+    categoryLabel: "Computer Vision · Security",
+    longDescription: "This system replaces sign-in sheets and access cards with biometric verification. Python and OpenCV handle the image processing behind fingerprint recognition, and records are written so they cannot be retroactively altered — giving an attendance log that can actually be trusted."
+  },
+  {
     id: "mpt-omniportal",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "Python",
       "Next.js",
@@ -102,7 +158,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "MPT OmniPortal",
     category: "ai_ml",
-    featured: false,
+    featured: true,
     subtitle: "Million Precision Time — AI Business Platform",
     highlights: [
       "Centralised fragmented business operations into a single portal",
@@ -115,6 +171,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "logiclens-ai",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "Flutter",
       "Dart",
@@ -125,7 +183,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "LogicLens.AI",
     category: "ai_ml",
-    featured: false,
+    featured: true,
     subtitle: "Government School — Immersive Maths Learning",
     highlights: [
       "AI virtual guide that explains maths concepts conversationally",
@@ -138,6 +196,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "rstar-pos-system",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "Flutter",
       "Dart",
@@ -147,7 +207,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "R-Star POS System",
     category: "mobile_ui",
-    featured: false,
+    featured: true,
     subtitle: "RStar Mini Mart — Windows Point of Sale",
     highlights: [
       "Immutable stock-movement ledger making every inventory change auditable",
@@ -161,6 +221,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "policy-snap",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "Next.js",
       "Capacitor",
@@ -183,6 +245,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "mpt-watch-sales-bot",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "Bot Automation",
       "Node.js"
@@ -201,50 +265,51 @@ export const PROJECTS: Project[] = [
     longDescription: "Built for Million Precision Time’s retail team, this bot removes error-prone manual calculation at the point of sale. Staff query it directly and get immediate figures for sale totals, commission, and discounting — speeding up transactions and cutting mistakes during busy periods."
   },
   {
-    id: "biometric-attendance",
+    id: "walletwise",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
-      "Python",
-      "OpenCV",
-      "Biometrics",
-      "Image Processing"
+      "TypeScript",
+      "CSS"
     ],
     image: "",
-    title: "Biometric Attendance System",
-    category: "iot_data",
+    title: "WalletWise",
+    category: "fullstack",
     featured: false,
-    subtitle: "Fingerprint Recognition & Tamper-Proof Logging",
+    subtitle: "Onyxx Tech — Personal Finance Tracker",
     highlights: [
-      "Fingerprint recognition powered by Python and OpenCV image processing",
-      "Tamper-proof logging for a trustworthy attendance record"
+      "Wallet transaction management with spending-habit breakdowns",
+      "Built in TypeScript for a fast, reliable experience"
     ],
-    description: "A high-security attendance tracking system using fingerprint recognition, built with Python and OpenCV for accurate, tamper-proof logging.",
-    categoryLabel: "Computer Vision · Security",
-    longDescription: "This system replaces sign-in sheets and access cards with biometric verification. Python and OpenCV handle the image processing behind fingerprint recognition, and records are written so they cannot be retroactively altered — giving an attendance log that can actually be trusted."
+    description: "A personal finance tracker for managing wallet transactions, monitoring spending habits, and staying on top of your financial health.",
+    categoryLabel: "Web App · Finance",
+    longDescription: "WalletWise gives everyday users a straightforward view of where their money goes. It records wallet transactions, breaks down spending habits over time, and surfaces the numbers that matter for financial health — built in TypeScript for a fast, reliable experience."
   },
   {
-    id: "ai-retail-manager",
+    id: "carousel-generator",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
-      "Python",
-      "Machine Learning",
-      "Demand Forecasting",
-      "Analytics"
+      "TypeScript",
+      "Web App"
     ],
     image: "",
-    title: "AI Retail Manager",
-    category: "ai_ml",
+    title: "Carousel Generator",
+    category: "fullstack",
     featured: false,
-    subtitle: "Machine Learning Retail Operations",
+    subtitle: "Onyxx Tech — Social Media Design Tool",
     highlights: [
-      "Automated stock tracking across the retail catalogue",
-      "Machine-learning demand forecasting to guide purchasing",
-      "Real-time sales analytics dashboard"
+      "Content-in, slides-out generation for Instagram and LinkedIn carousels",
+      "Consistent branding across every slide with zero design effort"
     ],
-    description: "A retail management solution powered by AI, featuring automated stock tracking, machine-learning demand forecasting, and real-time sales analytics.",
-    categoryLabel: "AI Platform · Retail",
-    longDescription: "AI Retail Manager applies machine learning to the operational side of retail. It tracks stock automatically, forecasts demand so ordering can be planned rather than reacted to, and surfaces sales analytics in real time — turning day-to-day transaction data into decisions about what to stock and when."
+    description: "A web tool that turns written content into styled, presentation-ready social media carousel slides optimised for Instagram and LinkedIn.",
+    categoryLabel: "Marketing Tool · Social Media",
+    longDescription: "Carousel Generator removes the design bottleneck from social publishing. Users paste in their content and get back consistently branded, presentation-ready carousel slides sized for Instagram, LinkedIn, and beyond — no design tooling or manual layout required."
   },
   {
     id: "conglomerate-website",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "HTML",
       "CSS",
@@ -268,6 +333,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "sun-tours-roma",
+    demoUrl: "",
+    githubUrl: "",
     tags: [
       "TSX",
       "JavaScript",
@@ -287,44 +354,6 @@ export const PROJECTS: Project[] = [
     description: "A landing page for Italian tourism built for an Italian client as part of the Sun Tours Virtual Guide initiative.",
     categoryLabel: "Website · Travel",
     longDescription: "Created for an Italian client under the Sun Tours Virtual Guide initiative, this landing page pairs a clean, responsive layout with evocative imagery of Rome and the Italian coast — designed so the destination itself does the selling."
-  },
-  {
-    id: "walletwise",
-    tags: [
-      "TypeScript",
-      "CSS"
-    ],
-    image: "",
-    title: "WalletWise",
-    category: "fullstack",
-    featured: false,
-    subtitle: "Onyxx Tech — Personal Finance Tracker",
-    highlights: [
-      "Wallet transaction management with spending-habit breakdowns",
-      "Built in TypeScript for a fast, reliable experience"
-    ],
-    description: "A personal finance tracker for managing wallet transactions, monitoring spending habits, and staying on top of your financial health.",
-    categoryLabel: "Web App · Finance",
-    longDescription: "WalletWise gives everyday users a straightforward view of where their money goes. It records wallet transactions, breaks down spending habits over time, and surfaces the numbers that matter for financial health — built in TypeScript for a fast, reliable experience."
-  },
-  {
-    id: "carousel-generator",
-    tags: [
-      "TypeScript",
-      "Web App"
-    ],
-    image: "",
-    title: "Carousel Generator",
-    category: "fullstack",
-    featured: false,
-    subtitle: "Onyxx Tech — Social Media Design Tool",
-    highlights: [
-      "Content-in, slides-out generation for Instagram and LinkedIn carousels",
-      "Consistent branding across every slide with zero design effort"
-    ],
-    description: "A web tool that turns written content into styled, presentation-ready social media carousel slides optimised for Instagram and LinkedIn.",
-    categoryLabel: "Marketing Tool · Social Media",
-    longDescription: "Carousel Generator removes the design bottleneck from social publishing. Users paste in their content and get back consistently branded, presentation-ready carousel slides sized for Instagram, LinkedIn, and beyond — no design tooling or manual layout required."
   }
 ];
 
@@ -336,6 +365,21 @@ export const SKILLS: Skill[] = [
     iconName: "Terminal",
     description: "Primary language for data analysis, machine learning, scripting, and automation.",
     highlighted: true
+  },
+  {
+    name: "pandas, NumPy & scikit-learn",
+    level: 85,
+    category: "Data Science & AI",
+    iconName: "Terminal",
+    description: "The core Python data stack — dataframes, numerical computing, and model training with scikit-learn.",
+    highlighted: true
+  },
+  {
+    name: "Power BI & Dashboarding",
+    level: 82,
+    category: "Data Science & AI",
+    iconName: "PieChart",
+    description: "Building dashboards and analytical reports that non-technical stakeholders can actually read and act on."
   },
   {
     name: "Data Analysis & Cleaning",
@@ -505,7 +549,7 @@ export const SKILLS: Skill[] = [
     level: 70,
     category: "Data Science & AI",
     iconName: "Code2",
-    description: "Do the best understand prompt engineering for the AI to get the best output."
+    description: "Designing and refining prompts to get reliable, structured output from large language models."
   }
 ];
 
@@ -536,7 +580,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "raffles-university",
     type: "education",
     badge: "🎓 Graduated",
-    title: "Bachelor Degree in Data Science",
+    title: "Bachelor of Science in Data Science — CGPA 3.80",
     period: "2024 — 2026",
     skills: [
       "Machine Learning",
@@ -549,7 +593,7 @@ export const TIMELINE: TimelineItem[] = [
     location: "Johor, Malaysia",
     description: "Undergraduate degree covering machine learning, statistical analysis, data mining and warehousing, database systems, and applied programming for data science.",
     achievements: [
-      "CGPA: 3.8",
+      "Graduated with a CGPA of 3.80",
       "Completed coursework in machine learning, neural networks, and predictive modelling",
       "Studied statistical analysis, time series forecasting, and data visualisation",
       "Applied Python, R, and SQL to practical analytical problems throughout the programme"
@@ -602,7 +646,7 @@ export const TIMELINE: TimelineItem[] = [
     id: "crescendo-college",
     type: "education",
     badge: "🎓 Completed",
-    title: "Diploma in Computer Science",
+    title: "Diploma in Computer Science — CGPA 3.20",
     period: "2020 — 2022",
     skills: [
       "Java",
@@ -614,7 +658,7 @@ export const TIMELINE: TimelineItem[] = [
     location: "Johor, Malaysia",
     description: "Diploma covering programming fundamentals, object-oriented design, data structures and algorithms, database systems, and system analysis and design.",
     achievements: [
-      "CGPA: 3.2",
+      "Graduated with a CGPA of 3.20",
       "Built a foundation in OOP, data structures, algorithms, and the SDLC",
       "Studied database design including ERD modelling and normalization",
       "Completed industrial training as part of the programme requirements"
@@ -654,7 +698,6 @@ export const TIMELINE: TimelineItem[] = [
     location: "Johor, Malaysia",
     description: "Completed Malaysian secondary education, qualifying for entry into tertiary computer science studies.",
     achievements: [
-      "Grades: 4A, 3B, & 1D",
       "Completed SPM secondary school certification"
     ],
     organization: "SMK Taman Pelangi Indah"
@@ -663,34 +706,40 @@ export const TIMELINE: TimelineItem[] = [
 
 export const TESTIMONIALS: Testimonial[] = [
   {
+    id: "ref-selvanathan",
+    name: "Mr. Selvanathan",
+    role: "GPK Penolong Kanan",
+    avatar: "",
+    rating: 0,
+    company: "SJK(T) Ladang Mount Austin",
+    content: "Supervised my data analysis and software development work during my internship. Contact details available on request."
+  },
+  {
     id: "ref-yuslizan",
     name: "Mr. Yuslizan",
     role: "Manager, F&B Department",
-    phone: "+65 9434 5561",
     avatar: "",
     rating: 0,
     company: "Grand Copthorne Waterfront, Singapore",
-    content: "Direct manager during my room service executive role."
+    content: "Direct manager during my Room Service Executive role in the F&B department. Contact details available on request."
   },
   {
     id: "ref-daina",
     name: "Miss Daina",
     role: "Admin",
-    phone: "+60 16-893 8980",
     avatar: "",
     rating: 0,
     company: "eYou Technology Sdn Bhd",
-    content: "Supervised my practical training placement in computer graphics development."
+    content: "Supervised my practical training placement in computer graphics development. Contact details available on request."
   },
   {
     id: "ref-sam",
     name: "Mr. Sam",
     role: "Director",
-    phone: "+60 19-766 7643",
     avatar: "",
     rating: 0,
     company: "Six Star Logistics & Trading",
-    content: "Employer during my warehouse and logistics role."
+    content: "Employer during my warehouse and logistics role. Contact details available on request."
   }
 ];
 

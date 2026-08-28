@@ -222,7 +222,7 @@ const TABS = [
 type TabId = typeof TABS[number]['id'];
 
 export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, onClose, onSignOut }) => {
-  const { data, setData, resetToDefaults, error } = usePortfolioData();
+  const { data, setData, discardChanges, error } = usePortfolioData();
   const [draft, setDraft] = useState<PortfolioContent>(data);
   const [activeTab, setActiveTab] = useState<TabId>('personal');
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
@@ -284,9 +284,11 @@ export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, 
     if (ok) setTimeout(() => setSaveState('idle'), 2200);
   };
 
-  const handleResetDefaults = async () => {
-    if (!confirm('Reset the entire portfolio back to its original default content? This cannot be undone.')) return;
-    await resetToDefaults();
+  // Re-reads the saved content from Supabase, throwing away unsaved edits in
+  // this modal. It does not touch the database — the saved version wins.
+  const handleDiscardChanges = async () => {
+    if (isDirty && !confirm('Discard your unsaved changes and reload the saved version?')) return;
+    await discardChanges();
     onClose();
   };
 
@@ -387,6 +389,7 @@ export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, 
                     Note: changing the public contact email only changes what's shown on the site — your login email stays the same.
                   </p>
 
+                  <TextArea label="Work Eligibility (shown on the CV)" value={draft.personalInfo.workEligibility} onChange={v => setDraft({ ...draft, personalInfo: { ...draft.personalInfo, workEligibility: v } })} rows={2} />
                   <TextArea label="Bio (shown in the hero)" value={draft.personalInfo.bio} onChange={v => setDraft({ ...draft, personalInfo: { ...draft.personalInfo, bio: v } })} rows={5} />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -511,12 +514,14 @@ export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, 
               {activeTab === 'projects' && (
                 <div className="space-y-4 max-w-3xl">
                   <div className="flex items-center justify-between">
-                    <p className="text-[11px] font-mono text-neutral-500">{draft.projects.length} projects</p>
+                    <p className="text-[11px] font-mono text-neutral-500">
+                      {draft.projects.length} projects · {draft.projects.filter(p => p.featured).length} on CV
+                    </p>
                     <button type="button" className={addBtn}
                       onClick={() => addItem('projects', {
                         id: `project-${Date.now()}`, title: 'New Project', subtitle: '', description: '',
                         category: 'fullstack', categoryLabel: 'Project', image: '', tags: [], featured: false,
-                        highlights: []
+                        highlights: [], demoUrl: '', githubUrl: ''
                       } as Project)}>
                       <Plus className="w-3 h-3" /> Add Project
                     </button>
@@ -530,6 +535,19 @@ export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, 
                       <Field label="Subtitle" value={project.subtitle} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { subtitle: v }) })} />
                       <TextArea label="Short Description" value={project.description} rows={3} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { description: v }) })} />
                       <TagsField label="Tech Tags" value={project.tags} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { tags: v }) })} />
+                      <ListField label="Highlights" hint="one per line — what it does or achieves" value={project.highlights} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { highlights: v }) })} />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Field label="Live Demo URL" placeholder="https://…" value={project.demoUrl ?? ''} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { demoUrl: v }) })} />
+                        <Field label="GitHub URL" placeholder="https://github.com/…" value={project.githubUrl ?? ''} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { githubUrl: v }) })} />
+                      </div>
+                      <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                        <input type="checkbox" checked={project.featured}
+                          onChange={e => setDraft({ ...draft, projects: patch(draft.projects, i, { featured: e.target.checked }) })}
+                          className="w-4 h-4 rounded accent-[#FF3E00] bg-white/[0.04] border-white/10" />
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-semibold">
+                          Feature on CV
+                        </span>
+                      </label>
                       <ImageField label="Cover Image (optional)" pathPrefix={`projects/${project.id}`} value={project.image} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { image: v }) })} />
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Field label="Category Label" value={project.categoryLabel} onChange={v => setDraft({ ...draft, projects: patch(draft.projects, i, { categoryLabel: v }) })} />
@@ -622,9 +640,10 @@ export const EditPortfolioModal: React.FC<EditPortfolioModalProps> = ({ isOpen, 
           {/* Footer */}
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-t border-white/10 shrink-0 bg-black/40">
             <div className="flex items-center gap-3">
-              <button type="button" onClick={handleResetDefaults}
-                className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors">
-                <RotateCcw className="w-3.5 h-3.5" /> Reset
+              <button type="button" onClick={handleDiscardChanges} disabled={!isDirty}
+                title={isDirty ? 'Reload the saved version and lose unsaved edits' : 'No unsaved changes'}
+                className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest text-neutral-500 hover:text-rose-400 transition-colors disabled:opacity-40 disabled:hover:text-neutral-500 disabled:cursor-not-allowed">
+                <RotateCcw className="w-3.5 h-3.5" /> Discard Changes
               </button>
               <button type="button" onClick={onSignOut}
                 className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest text-neutral-500 hover:text-white transition-colors">

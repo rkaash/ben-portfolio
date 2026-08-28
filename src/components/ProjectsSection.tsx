@@ -117,6 +117,37 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ theme }) => {
                     ))}
                   </div>
                 </div>
+
+                {/* Links — only rendered once a URL is filled in, so cards with
+                    no links look exactly as they did before. */}
+                {(project.demoUrl || project.githubUrl) && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {project.demoUrl && (
+                      <a
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1.5 rounded-full text-[10px] sm:text-[9px] font-mono uppercase tracking-widest border border-[#FF3E00]/50 text-[#FF9E00] hover:bg-[#FF3E00]/10 transition-colors"
+                      >
+                        Live Demo
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`px-3 py-1.5 rounded-full text-[10px] sm:text-[9px] font-mono uppercase tracking-widest border transition-colors ${
+                          isDark
+                            ? 'glass-card border-white/10 text-neutral-400 hover:text-white hover:border-white/30'
+                            : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-400'
+                        }`}
+                      >
+                        Source
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}

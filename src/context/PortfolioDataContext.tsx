@@ -1,74 +1,51 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import {
-  DEFAULT_PERSONAL_INFO,
-  DEFAULT_ABOUT_DATA,
-  PROJECTS,
-  SKILLS,
-  TIMELINE,
-  TESTIMONIALS,
-  FREQUENT_QUESTIONS,
-} from '../data/portfolioData';
+import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { supabase, isSupabaseConfigured, CONTENT_TABLE } from '../lib/supabaseClient';
 import { PortfolioContent } from '../types';
 
-export const DEFAULT_CONTENT: PortfolioContent = {
-  personalInfo: DEFAULT_PERSONAL_INFO,
-  about: DEFAULT_ABOUT_DATA,
-  projects: PROJECTS,
-  skills: SKILLS,
-  timeline: TIMELINE,
-  testimonials: TESTIMONIALS,
-  faqs: FREQUENT_QUESTIONS,
-};
-
-// Merges a stored payload over the bundled defaults so fields added to the
-// defaults after a row was saved still appear instead of coming back undefined.
-function mergeWithDefaults(parsed: Partial<PortfolioContent> | null | undefined): PortfolioContent {
-  if (!parsed) return DEFAULT_CONTENT;
-  return {
-    personalInfo: {
-      ...DEFAULT_CONTENT.personalInfo,
-      ...parsed.personalInfo,
-      socials: { ...DEFAULT_CONTENT.personalInfo.socials, ...parsed.personalInfo?.socials },
-      stats: Array.isArray(parsed.personalInfo?.stats) ? parsed.personalInfo!.stats : DEFAULT_CONTENT.personalInfo.stats,
-    },
-    about: {
-      ...DEFAULT_CONTENT.about,
-      ...parsed.about,
-      pillars: Array.isArray(parsed.about?.pillars) ? parsed.about!.pillars : DEFAULT_CONTENT.about.pillars,
-    },
-    projects: Array.isArray(parsed.projects) ? parsed.projects : DEFAULT_CONTENT.projects,
-    skills: Array.isArray(parsed.skills) ? parsed.skills : DEFAULT_CONTENT.skills,
-    timeline: Array.isArray(parsed.timeline) ? parsed.timeline : DEFAULT_CONTENT.timeline,
-    testimonials: Array.isArray(parsed.testimonials) ? parsed.testimonials : DEFAULT_CONTENT.testimonials,
-    faqs: Array.isArray(parsed.faqs) ? parsed.faqs : DEFAULT_CONTENT.faqs,
-  };
-}
+/**
+ * Supabase is the ONLY source of portfolio content at runtime.
+ *
+ * There is deliberately no bundled fallback: if the database cannot be reached,
+ * the site shows an error instead of quietly serving a stale snapshot that was
+ * frozen into the bundle at build time. Silently-wrong content is worse than a
+ * visible failure — it hides the outage and misrepresents the owner.
+ *
+ * `src/data/portfolioData.ts` still exists, but ONLY as the seed that
+ * `npm run gen:content` compiles into supabase/update-content.sql. It is never
+ * imported by anything that renders.
+ */
 
 interface PortfolioDataContextValue {
   data: PortfolioContent;
-  isLoading: boolean;
   error: string | null;
   /** Persists to Supabase. Resolves true on success, false (with `error` set) on failure. */
   setData: (next: PortfolioContent) => Promise<boolean>;
-  resetToDefaults: () => Promise<boolean>;
+  /** Throws away unsaved edits by re-reading the saved content from Supabase. */
+  discardChanges: () => Promise<void>;
   refresh: () => Promise<void>;
 }
 
 const PortfolioDataContext = createContext<PortfolioDataContextValue | null>(null);
 
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'ready'; content: PortfolioContent }
+  | { status: 'error'; message: string };
+
 export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [data, setDataState] = useState<PortfolioContent>(DEFAULT_CONTENT);
-  const [isLoading, setIsLoading] = useState<boolean>(isSupabaseConfigured);
-  const [error, setError] = useState<string | null>(null);
-  const lastGoodRef = useRef<PortfolioContent>(DEFAULT_CONTENT);
+  const [state, setState] = useState<LoadState>(
+    isSupabaseConfigured
+      ? { status: 'loading' }
+      : { status: 'error', message: 'Supabase is not configured, so there is no content to load.' }
+  );
+  // Holds the last successfully saved content so a failed write can be rolled back.
+  const lastGoodRef = useRef<PortfolioContent | null>(null);
 
   const load = useCallback(async () => {
-    if (!supabase) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
+    if (!supabase) return;
+    setState({ status: 'loading' });
+
     const { data: row, error: fetchError } = await supabase
       .from(CONTENT_TABLE)
       .select('content')
@@ -76,61 +53,126 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
       .maybeSingle();
 
     if (fetchError) {
-      setError(`Could not load portfolio content: ${fetchError.message}`);
-    } else if (row?.content) {
-      const merged = mergeWithDefaults(row.content as Partial<PortfolioContent>);
-      setDataState(merged);
-      lastGoodRef.current = merged;
-      setError(null);
+      setState({ status: 'error', message: `Could not load portfolio content: ${fetchError.message}` });
+      return;
     }
-    setIsLoading(false);
+    if (!row?.content) {
+      setState({
+        status: 'error',
+        message:
+          'No portfolio content found in the database. Run supabase/update-content.sql in the Supabase SQL Editor to seed it.',
+      });
+      return;
+    }
+
+    const content = row.content as PortfolioContent;
+    lastGoodRef.current = content;
+    setState({ status: 'ready', content });
   }, []);
 
   useEffect(() => {
     load();
   }, [load]);
 
+  const [writeError, setWriteError] = useState<string | null>(null);
+
   const persist = useCallback(async (next: PortfolioContent): Promise<boolean> => {
     const previous = lastGoodRef.current;
-    setDataState(next);
+    setState({ status: 'ready', content: next });
 
     if (!supabase) {
-      setError('Supabase is not configured, so changes cannot be saved.');
+      setWriteError('Supabase is not configured, so changes cannot be saved.');
       return false;
     }
 
-    const { error: writeError } = await supabase
+    const { error: err } = await supabase
       .from(CONTENT_TABLE)
       .upsert({ id: 1, content: next }, { onConflict: 'id' });
 
-    if (writeError) {
-      setDataState(previous);
-      setError(
-        writeError.message.toLowerCase().includes('row-level security')
+    if (err) {
+      if (previous) setState({ status: 'ready', content: previous });
+      setWriteError(
+        err.message.toLowerCase().includes('row-level security')
           ? 'Not authorised to save. Please verify your email again.'
-          : `Save failed: ${writeError.message}`
+          : `Save failed: ${err.message}`
       );
       return false;
     }
 
     lastGoodRef.current = next;
-    setError(null);
+    setWriteError(null);
     return true;
   }, []);
 
-  const resetToDefaults = useCallback(() => persist(DEFAULT_CONTENT), [persist]);
+  const discardChanges = useCallback(async () => {
+    setWriteError(null);
+    await load();
+  }, [load]);
 
   const value = useMemo(
-    () => ({ data, isLoading, error, setData: persist, resetToDefaults, refresh: load }),
-    [data, isLoading, error, persist, resetToDefaults, load]
+    () =>
+      state.status === 'ready'
+        ? {
+            data: state.content,
+            error: writeError,
+            setData: persist,
+            discardChanges,
+            refresh: load,
+          }
+        : null,
+    [state, writeError, persist, discardChanges, load]
   );
 
-  return (
-    <PortfolioDataContext.Provider value={value}>
-      {children}
-    </PortfolioDataContext.Provider>
-  );
+  if (state.status === 'loading' || !value) {
+    return <StatusScreen kind="loading" />;
+  }
+  if (state.status === 'error') {
+    return <StatusScreen kind="error" message={state.message} onRetry={load} />;
+  }
+
+  return <PortfolioDataContext.Provider value={value}>{children}</PortfolioDataContext.Provider>;
 };
+
+/**
+ * Full-page loading / failure state. Rendered in place of the site, because
+ * without content from the database there is genuinely nothing to show.
+ */
+const StatusScreen: React.FC<{ kind: 'loading' | 'error'; message?: string; onRetry?: () => void }> = ({
+  kind,
+  message,
+  onRetry,
+}) => (
+  <div className="min-h-screen bg-[#0a0a0a] text-neutral-300 flex items-center justify-center px-6">
+    <div className="max-w-md text-center">
+      {kind === 'loading' ? (
+        <>
+          <Loader2 className="w-7 h-7 mx-auto animate-spin text-[#FF9E00]" />
+          <p className="mt-4 text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-500">
+            Loading portfolio…
+          </p>
+        </>
+      ) : (
+        <>
+          <div className="w-12 h-12 mx-auto rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center">
+            <AlertCircle className="w-5 h-5 text-rose-400" />
+          </div>
+          <h1 className="mt-5 text-lg font-bold text-white">Portfolio unavailable</h1>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-400">{message}</p>
+          {onRetry && (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-mono uppercase tracking-wider font-bold accent-gradient text-black hover:scale-105 transition-transform"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Try again
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  </div>
+);
 
 export function usePortfolioData(): PortfolioDataContextValue {
   const ctx = useContext(PortfolioDataContext);
