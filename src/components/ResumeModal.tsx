@@ -56,6 +56,11 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
     return acc;
   }, {});
 
+  // Mirrors generateResumePdf exactly: every project ticked "Feature on CV" is
+  // shown, with an unticked catalogue falling back to the first six.
+  const featuredProjects = projects.filter(p => p.featured);
+  const cvProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 6);
+
   const education = timeline.filter(t => t.type === 'education');
   const experience = timeline.filter(t => t.type === 'experience');
   const awards = timeline.filter(t => t.type === 'award');
@@ -149,6 +154,10 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   {info.phone && <span className="inline-flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-[#FF3E00]" />{info.phone}</span>}
                   {info.location && <span className="inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-[#FF3E00]" />{info.location}</span>}
                 </div>
+
+                {info.workEligibility && (
+                  <p className="text-[10.5px] text-slate-600 italic mt-2 leading-snug">{info.workEligibility}</p>
+                )}
 
                 <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-2 text-[11px] text-slate-700">
                   {info.socials.linkedin && <span className="inline-flex items-center gap-1.5"><Linkedin className="w-3.5 h-3.5 text-[#FF3E00]" />{info.socials.linkedin.replace(/^https?:\/\//, '')}</span>}
@@ -286,11 +295,11 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
               </section>
 
               {/* Projects */}
-              {projects.length > 0 && (
+              {cvProjects.length > 0 && (
                 <section className="resume-block">
                   <h2 className="resume-h2">Projects</h2>
                   <div className="space-y-3.5">
-                    {projects.map(p => (
+                    {cvProjects.map(p => (
                       <div key={p.id} className="break-inside-avoid">
                         <div className="flex flex-wrap items-baseline justify-between gap-2">
                           <h3 className="text-[13px] font-bold text-slate-900">{p.title}</h3>

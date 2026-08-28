@@ -243,6 +243,15 @@ export async function buildResumePdf(content: PortfolioContent): Promise<jsPDF> 
     ty += 11.5;
   }
 
+  if (info.workEligibility) {
+    setFont(8.2, 'italic', MUTED);
+    for (const line of wrap(info.workEligibility, textW)) {
+      doc.text(line, textX, ty + 7);
+      ty += 10.5;
+    }
+    ty += 2;
+  }
+
   const web = [info.socials.linkedin, info.socials.github, info.socials.website]
     .filter(Boolean)
     .map(u => u.replace(/^https?:\/\//, '').replace(/\/$/, ''));
@@ -282,29 +291,24 @@ export async function buildResumePdf(content: PortfolioContent): Promise<jsPDF> 
       doc.setLineWidth(0.6);
       doc.roundedRect(x, y, boxW, boxH, 5, 5, 'FD');
 
-      setFont(13, 'bold', ACCENT);
-      doc.text(s.value, x + boxW / 2, y + 18, { align: 'center', maxWidth: boxW - 8 });
+      // Shrink to fit: values range from "11" to "BSc Data Science", and a long
+      // one at a fixed size spills straight out of the box.
+      const maxValueW = boxW - 10;
+      let vSize = 13;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(vSize);
+      while (vSize > 6.5 && doc.getTextWidth(s.value) > maxValueW) {
+        vSize -= 0.5;
+        doc.setFontSize(vSize);
+      }
+      setFont(vSize, 'bold', ACCENT);
+      doc.text(s.value, x + boxW / 2, y + 18, { align: 'center' });
 
       setFont(6.6, 'normal', MUTED);
       const label = wrap(s.label.toUpperCase(), boxW - 8);
       doc.text(label.slice(0, 2), x + boxW / 2, y + 28, { align: 'center' });
     });
     y += boxH + 12;
-  }
-
-  // -- experience ----------------------------------------------------------
-  const experience = timeline.filter(t => t.type === 'experience');
-  if (experience.length) {
-    sectionHeading('Professional Experience');
-    experience.forEach((item, i) => {
-      entryHeader(item.title, item.period);
-      metaLine([item.organization, item.location].filter(Boolean).join('  •  '));
-      if (item.description) { y += 1; paragraph(item.description, 9, MUTED); }
-      if (item.achievements.length) { y += 2; bullets(item.achievements); }
-      if (item.skills.length) { y += 2; tagLine('Skills', item.skills); }
-      if (i < experience.length - 1) y += 10;
-    });
-    y += 4;
   }
 
   // -- education -----------------------------------------------------------
@@ -348,15 +352,50 @@ export async function buildResumePdf(content: PortfolioContent): Promise<jsPDF> 
     });
   }
 
+  // -- experience ----------------------------------------------------------
+  const experience = timeline.filter(t => t.type === 'experience');
+  if (experience.length) {
+    sectionHeading('Professional Experience');
+    experience.forEach((item, i) => {
+      entryHeader(item.title, item.period);
+      metaLine([item.organization, item.location].filter(Boolean).join('  •  '));
+      if (item.description) { y += 1; paragraph(item.description, 9, MUTED); }
+      if (item.achievements.length) { y += 2; bullets(item.achievements); }
+      if (item.skills.length) { y += 2; tagLine('Skills', item.skills); }
+      if (i < experience.length - 1) y += 10;
+    });
+    y += 4;
+  }
+
   // -- projects ------------------------------------------------------------
-  if (projects.length) {
-    sectionHeading('Projects');
-    projects.forEach((p, i) => {
+  // "Feature on CV" in the editor picks what appears here. Every ticked project
+  // is rendered — an explicit tick is an instruction, so it is never silently
+  // dropped. With nothing ticked at all, fall back to the first six projects
+  // so the CV is not left empty.
+  const featuredProjects = projects.filter(p => p.featured);
+  const cvProjects = featuredProjects.length ? featuredProjects : projects.slice(0, 6);
+  if (cvProjects.length) {
+    sectionHeading('Selected Projects');
+    cvProjects.forEach((p, i) => {
       entryHeader(p.title, p.categoryLabel, p.subtitle);
       if (p.description) paragraph(p.description, 8.9, MUTED);
       if (p.tags.length) { y += 1; tagLine('Tech', p.tags); }
-      if (i < projects.length - 1) y += 9;
+      const links = [p.demoUrl, p.githubUrl]
+        .filter(Boolean)
+        .map(u => (u as string).replace(/^https?:\/\//, '').replace(/\/$/, ''));
+      if (links.length) tagLine('Links', links);
+      if (i < cvProjects.length - 1) y += 9;
     });
+    if (projects.length > cvProjects.length) {
+      y += 3;
+      paragraph(
+        `Plus ${projects.length - cvProjects.length} further projects — see ${
+          (info.socials.website || 'the portfolio').replace(/^https?:\/\//, '')
+        }`,
+        8.2,
+        LIGHT
+      );
+    }
     y += 4;
   }
 
