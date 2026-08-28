@@ -22,8 +22,8 @@ import { Project, Skill, TimelineItem, Testimonial, PersonalInfo, AboutData, Faq
 export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   bio: "Data Science graduate (BSc, CGPA 3.80) from Raffles University, with a Diploma in Computer Science. I recently completed my internship as a Data Analyst and Software Developer, and alongside my studies I have shipped eleven production applications for real, paying clients — AI platforms, machine-learning forecasting, point-of-sale systems, and business automation. I work end to end: from raw data and cleaning, through modelling and dashboards, to the software that puts the result in front of users. I am now seeking a Data Analyst or Junior Data Scientist role.",
   name: "Rooben Prakaash",
-  role: "Data Analyst | Junior Data Scientist",
-  email: "onyxtech26@gmail.com",
+  role: "Junior Data Scientist",
+  email: "r.prakaash@yahoo.com",
   phone: "+60 19-468 8052",
   stats: [
     {
@@ -46,7 +46,7 @@ export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   status: "Graduated • Seeking Data Analyst / Junior Data Scientist roles",
   workEligibility: "Malaysian citizen — immediately available in Malaysia. Singapore roles require Employment Pass sponsorship.",
   socials: {
-    email: "mailto:onyxtech26@gmail.com",
+    email: "mailto:r.prakaash@yahoo.com",
     github: "https://github.com/rkaash",
     // Was holding a duplicate of the LinkedIn URL live, which sent the footer's
     // Indeed button to the wrong site. Blank until a real Indeed profile exists.
@@ -232,7 +232,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "Policy Snap",
     category: "ai_ml",
-    featured: false,
+    featured: true,
     subtitle: "Great Eastern — Insurance Summary Generator",
     highlights: [
       "One-step conversion from NotebookLM JSON to a print-ready A4 summary",
@@ -254,7 +254,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "MPT Watch Sales Bot",
     category: "iot_data",
-    featured: false,
+    featured: true,
     subtitle: "Million Precision Time — Retail Assistant",
     highlights: [
       "Instant sale, commission, and discount calculation for shop-floor staff",
@@ -275,7 +275,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "WalletWise",
     category: "fullstack",
-    featured: false,
+    featured: true,
     subtitle: "Onyxx Tech — Personal Finance Tracker",
     highlights: [
       "Wallet transaction management with spending-habit breakdowns",
@@ -296,7 +296,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "Carousel Generator",
     category: "fullstack",
-    featured: false,
+    featured: true,
     subtitle: "Onyxx Tech — Social Media Design Tool",
     highlights: [
       "Content-in, slides-out generation for Instagram and LinkedIn carousels",
@@ -320,7 +320,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "Conglomerate Website",
     category: "fullstack",
-    featured: false,
+    featured: true,
     subtitle: "Conglomerate Consultant Company — Corporate Site",
     highlights: [
       "Clear presentation of four distinct corporate divisions",
@@ -345,7 +345,7 @@ export const PROJECTS: Project[] = [
     image: "",
     title: "Sun Tours Roma",
     category: "fullstack",
-    featured: false,
+    featured: true,
     subtitle: "Sun Tours — Italian Tourism Landing Page",
     highlights: [
       "Delivered for an international client within the Sun Tours Virtual Guide initiative",
@@ -614,10 +614,10 @@ export const TIMELINE: TimelineItem[] = [
     location: "Singapore",
     description: "Efficient Hospitality Professional with expertise in managing in-room dining systems, processing accurate orders, and handling secure payment settlements. Skilled in coordinate-driven kitchen communication, guest relationship management, and resolving service feedback to elevate the hotel dining experience.",
     achievements: [
-      "Guest satisfaction by increased room service guest satisfaction scores (GSS) by 18%",
-      "Cost efficiency via reduced food and operational wastage by 12%",
-      "Speed of service that decreased average order delivery time from 45 minutes to 28 minutes",
-      "Team Leadership to trained and mentored a team of 15+ attendants and servers"
+      "Improved guest satisfaction scores by restructuring the in-room dining order workflow",
+      "Reduced food and operational wastage through tighter stock control and order accuracy",
+      "Cut average order delivery time by streamlining kitchen-to-room coordination",
+      "Trained and mentored a team of attendants and servers"
     ],
     organization: "Grand Copthorne Waterfront Hotel"
   },
